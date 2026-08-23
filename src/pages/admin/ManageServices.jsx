@@ -1,20 +1,19 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Pencil, Trash2, X, Check } from "lucide-react";
-import { demoServices } from "../../services/demoData";
+import { useSiteData } from "../../context/SiteDataContext";
 // import { servicesAPI } from "../../services/api"; // ← uncomment when backend ready
 
 const EMPTY = { title: "", icon: "Wrench", description: "", status: "active" };
-
 const inp = "w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white text-sm placeholder:text-white/25 outline-none focus:border-orange-500/50 transition";
 
 const ManageServices = () => {
-  const [items, setItems]     = useState(demoServices);
-  const [modal, setModal]     = useState(false);   // "add" | "edit" | false
-  const [form, setForm]       = useState(EMPTY);
-  const [editId, setEditId]   = useState(null);
-  const [delId, setDelId]     = useState(null);
-  const [saving, setSaving]   = useState(false);
+  const { services, setServices } = useSiteData();
+  const [modal, setModal]   = useState(false);
+  const [form, setForm]     = useState(EMPTY);
+  const [editId, setEditId] = useState(null);
+  const [delId, setDelId]   = useState(null);
+  const [saving, setSaving] = useState(false);
 
   const openAdd  = () => { setForm(EMPTY); setEditId(null); setModal("add"); };
   const openEdit = (item) => { setForm({ ...item }); setEditId(item.id); setModal("edit"); };
@@ -26,10 +25,10 @@ const ManageServices = () => {
       if (modal === "add") {
         // const created = await servicesAPI.create(form);
         const created = { ...form, id: Date.now() };
-        setItems(prev => [...prev, created]);
+        setServices([...services, created]);
       } else {
         // await servicesAPI.update(editId, form);
-        setItems(prev => prev.map(s => s.id === editId ? { ...form, id: editId } : s));
+        setServices(services.map(s => s.id === editId ? { ...form, id: editId } : s));
       }
       setModal(false);
     } finally {
@@ -39,7 +38,7 @@ const ManageServices = () => {
 
   const handleDelete = async (id) => {
     // await servicesAPI.delete(id);
-    setItems(prev => prev.filter(s => s.id !== id));
+    setServices(services.filter(s => s.id !== id));
     setDelId(null);
   };
 
@@ -48,7 +47,7 @@ const ManageServices = () => {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-2xl font-black text-white mb-1">Services</h2>
-          <p className="text-white/40 text-sm">{items.length} services listed on the website</p>
+          <p className="text-white/40 text-sm">{services.length} services · {services.filter(s=>s.status==="active").length} active</p>
         </div>
         <motion.button onClick={openAdd}
           whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
@@ -59,7 +58,7 @@ const ManageServices = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-        {items.map((s, i) => (
+        {services.map((s, i) => (
           <motion.div key={s.id}
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}

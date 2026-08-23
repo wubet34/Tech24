@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext";
+import { SiteDataProvider } from "./context/SiteDataContext";
 
 import Navbar        from "./components/layout/Navbar";
 import Footer        from "./components/layout/Footer";
@@ -41,7 +42,8 @@ const AppShell = () => (
           <div className="relative z-10">
             <ScrollToTop />
             <Navbar />
-            <main>{element}</main>
+            {/* pt-20 ensures content starts below the fixed navbar on all screen sizes */}
+            <main className="pt-20">{element}</main>
             <Footer />
           </div>
         } />
@@ -52,7 +54,9 @@ const AppShell = () => (
 
 const App = () => (
   <ThemeProvider>
-    <AppShell />
+    <SiteDataProvider>
+      <AppShell />
+    </SiteDataProvider>
   </ThemeProvider>
 );
 

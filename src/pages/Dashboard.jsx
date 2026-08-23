@@ -38,14 +38,25 @@ const Dashboard = () => {
   useEffect(() => {
     const load = async () => {
       try {
+        // Try to get user from localStorage first (demo mode)
+        const stored = localStorage.getItem("user");
+        if (stored) {
+          setUser(JSON.parse(stored));
+          return;
+        }
+        // When real backend is ready, this fetch will take over
         const token = localStorage.getItem("token");
         const res = await fetch("http://localhost:3000/api/users/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (res.ok) setUser(await res.json());
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data);
+          localStorage.setItem("user", JSON.stringify(data));
+        }
       } catch {
-        // backend not connected — show demo admin
-        setUser({ name: "Admin User", email: "admin@tech24.com", created_at: new Date().toISOString() });
+        // Fallback to a default admin display
+        setUser({ name: "Admin", email: "admin@tech24.com", created_at: new Date().toISOString() });
       }
     };
     load();
@@ -53,6 +64,7 @@ const Dashboard = () => {
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     window.location.href = "/login";
   };
 

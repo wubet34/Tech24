@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Pencil, Trash2, Building2 } from "lucide-react";
-import { demoBanks } from "../../services/demoData";
+import { useSiteData } from "../../context/SiteDataContext";
 import { Modal, Field, SaveBar, ConfirmDelete } from "./ManageServices";
 // import { banksAPI } from "../../services/api"; // ← uncomment when backend ready
 
@@ -9,7 +9,7 @@ const inp = "w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-
 const EMPTY = { name: "", years: "1+ years", atms: 0, status: "active", contact: "" };
 
 const ManageBanks = () => {
-  const [items, setItems]   = useState(demoBanks);
+  const { banks, setBanks } = useSiteData();
   const [modal, setModal]   = useState(false);
   const [form, setForm]     = useState(EMPTY);
   const [editId, setEditId] = useState(null);
@@ -25,10 +25,10 @@ const ManageBanks = () => {
     try {
       if (modal === "add") {
         // const created = await banksAPI.create(form);
-        setItems(prev => [...prev, { ...form, id: Date.now() }]);
+        setBanks([...banks, { ...form, id: Date.now() }]);
       } else {
         // await banksAPI.update(editId, form);
-        setItems(prev => prev.map(b => b.id === editId ? { ...form, id: editId } : b));
+        setBanks(banks.map(b => b.id === editId ? { ...form, id: editId } : b));
       }
       setModal(false);
     } finally {
@@ -38,18 +38,18 @@ const ManageBanks = () => {
 
   const handleDelete = async (id) => {
     // await banksAPI.delete(id);
-    setItems(prev => prev.filter(b => b.id !== id));
+    setBanks(banks.filter(b => b.id !== id));
     setDelId(null);
   };
 
-  const total = items.reduce((sum, b) => sum + Number(b.atms || 0), 0);
+  const total = banks.reduce((sum, b) => sum + Number(b.atms || 0), 0);
 
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-2xl font-black text-white mb-1">Partner Banks</h2>
-          <p className="text-white/40 text-sm">{items.length} banks · {total} ATMs managed</p>
+          <p className="text-white/40 text-sm">{banks.length} banks · {total} ATMs managed</p>
         </div>
         <motion.button onClick={openAdd}
           whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
@@ -70,7 +70,7 @@ const ManageBanks = () => {
             </tr>
           </thead>
           <tbody>
-            {items.map((b, i) => (
+            {banks.map((b, i) => (
               <motion.tr key={b.id}
                 initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.04 }}

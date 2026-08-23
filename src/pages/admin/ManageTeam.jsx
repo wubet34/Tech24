@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Pencil, Trash2, UserCircle2 } from "lucide-react";
-import { demoTeam } from "../../services/demoData";
+import { useSiteData } from "../../context/SiteDataContext";
 import { Modal, Field, SaveBar, ConfirmDelete } from "./ManageServices";
 // import { teamAPI } from "../../services/api"; // ← uncomment when backend ready
 
@@ -9,7 +9,7 @@ const inp = "w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-
 const EMPTY = { name: "", role: "", bio: "" };
 
 const ManageTeam = () => {
-  const [items, setItems]   = useState(demoTeam);
+  const { team, setTeam } = useSiteData();
   const [modal, setModal]   = useState(false);
   const [form, setForm]     = useState(EMPTY);
   const [editId, setEditId] = useState(null);
@@ -24,9 +24,9 @@ const ManageTeam = () => {
     setSaving(true);
     try {
       if (modal === "add") {
-        setItems(prev => [...prev, { ...form, id: Date.now(), icon: "UserCircle2" }]);
+        setTeam([...team, { ...form, id: Date.now(), icon: "UserCircle2" }]);
       } else {
-        setItems(prev => prev.map(t => t.id === editId ? { ...form, id: editId } : t));
+        setTeam(team.map(t => t.id === editId ? { ...form, id: editId } : t));
       }
       setModal(false);
     } finally {
@@ -34,8 +34,8 @@ const ManageTeam = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    setItems(prev => prev.filter(t => t.id !== id));
+  const handleDelete = (id) => {
+    setTeam(team.filter(t => t.id !== id));
     setDelId(null);
   };
 
@@ -44,7 +44,7 @@ const ManageTeam = () => {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-2xl font-black text-white mb-1">Team Members</h2>
-          <p className="text-white/40 text-sm">{items.length} members shown on the About page</p>
+          <p className="text-white/40 text-sm">{team.length} members shown on the About page</p>
         </div>
         <motion.button onClick={openAdd}
           whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
@@ -55,14 +55,13 @@ const ManageTeam = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
-        {items.map((t, i) => (
+        {team.map((t, i) => (
           <motion.div key={t.id}
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.06 }}
             className="glass-card rounded-2xl p-6 text-center relative group"
           >
-            {/* Actions overlay */}
-            <div className="absolute top-3 right-3 flex gap-1.5 opacity-0 group-hover:opacity-100 transition">
+            <div className="absolute top-3 right-3 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
               <button onClick={() => openEdit(t)}
                 className="h-7 w-7 rounded-lg bg-white/5 hover:bg-orange-500/20 hover:text-orange-400 text-white/40 flex items-center justify-center transition">
                 <Pencil size={12} />

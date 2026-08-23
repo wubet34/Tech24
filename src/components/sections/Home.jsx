@@ -6,15 +6,17 @@ import SectionHeading from "../ui/SectionHeading";
 import GlowButton from "../ui/GlowButton";
 import GetQuoteModal from "./GetQuoteModal";
 import { useTheme } from "../../context/ThemeContext";
-import { STATS } from "../../constants";
+import { useSiteData } from "../../context/SiteDataContext";
+
+const ICON_MAP = { Wrench, Clock, ShieldCheck, Users, Globe, Cpu };
 
 const SERVICES_PREVIEW = [
-  { icon: Wrench,      title: "ATM Installation",    desc: "Professional installation of new ATMs with GRG Banking Systems." },
-  { icon: Clock,       title: "24/7 Emergency",      desc: "Round-the-clock emergency repair and maintenance services." },
-  { icon: ShieldCheck, title: "Genuine Parts",       desc: "Original spare parts and components for all ATM models." },
-  { icon: Users,       title: "Expert Team",         desc: "Certified and experienced GRG system technicians." },
-  { icon: Globe,       title: "Nationwide",          desc: "Services available across all regions of Ethiopia." },
-  { icon: Cpu,         title: "GRG Banking Support", desc: "Expert support including software updates and troubleshooting." },
+  { icon: "Wrench",      title: "ATM Installation",    desc: "Professional installation of new ATMs with GRG Banking Systems." },
+  { icon: "Clock",       title: "24/7 Emergency",      desc: "Round-the-clock emergency repair and maintenance services." },
+  { icon: "ShieldCheck", title: "Genuine Parts",       desc: "Original spare parts and components for all ATM models." },
+  { icon: "Users",       title: "Expert Team",         desc: "Certified and experienced GRG system technicians." },
+  { icon: "Globe",       title: "Nationwide",          desc: "Services available across all regions of Ethiopia." },
+  { icon: "Cpu",         title: "GRG Banking Support", desc: "Expert support including software updates and troubleshooting." },
 ];
 
 const fadeUp = (delay = 0) => ({
@@ -26,6 +28,7 @@ const fadeUp = (delay = 0) => ({
 const Home = () => {
   const [openQuote, setOpenQuote] = useState(false);
   const { dark } = useTheme();
+  const { hero, stats, services } = useSiteData();
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const heroY  = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
@@ -35,7 +38,7 @@ const Home = () => {
     <div className="min-h-screen" style={{ color: "var(--text)" }}>
 
       {/* ══ HERO ══════════════════════════════════════════════ */}
-      <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section ref={heroRef} className="relative min-h-[calc(100vh-5rem)] flex items-center justify-center overflow-hidden">
 
         {/* Animated CSS blobs — no Three.js */}
         <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden">
@@ -60,7 +63,7 @@ const Home = () => {
         <div className="absolute inset-0 -z-10 bg-grid opacity-60" />
 
         <motion.div style={{ y: heroY, opacity: heroOp }}
-          className="relative max-w-6xl mx-auto px-6 text-center pt-28 pb-20"
+          className="relative max-w-6xl mx-auto px-6 text-center py-20"
         >
           {/* Live badge */}
           <motion.div {...fadeUp(0.1)}>
@@ -71,7 +74,7 @@ const Home = () => {
                 <span className="absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75 animate-ping" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-orange-500" />
               </span>
-              Welcome To Tech24
+              {hero.badge}
             </span>
           </motion.div>
 
@@ -79,18 +82,14 @@ const Home = () => {
           <motion.h1 {...fadeUp(0.2)}
             className="max-w-5xl mx-auto text-5xl md:text-7xl font-bold leading-tight gradient-text"
           >
-            Professional ATM Installation & Maintenance Services
+            {hero.headline}
           </motion.h1>
 
-          {/* Sub */}
           <motion.p {...fadeUp(0.35)}
             className="max-w-2xl mx-auto mt-7 text-lg md:text-xl leading-relaxed"
             style={{ color: "var(--text-muted)" }}
           >
-            Trusted by{" "}
-            <span className="text-orange-500 font-semibold">6+ banks</span> across Ethiopia.
-            Expert GRG Banking System support with{" "}
-            <span className="text-orange-500 font-semibold">24/7 emergency response</span>.
+            {hero.subline}
           </motion.p>
 
           {/* CTAs */}
@@ -109,7 +108,7 @@ const Home = () => {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto"
           >
-            {STATS.map(({ value, label }, i) => (
+            {stats.map(({ value, label }, i) => (
               <motion.div key={i}
                 whileHover={{ y: -5, scale: 1.04, transition: { duration: 0.25 } }}
                 className="glass-card rounded-3xl p-6 text-center"
@@ -145,20 +144,23 @@ const Home = () => {
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {SERVICES_PREVIEW.map(({ icon: Icon, title, desc }, i) => (
-            <AnimatedCard key={i} delay={i * 0.08} hover3d className="p-8 group cursor-default">
-              <div className={`mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl transition-colors duration-300
-                ${dark ? "bg-orange-500/10 border border-orange-500/20 group-hover:bg-orange-500/20"
-                       : "bg-orange-50 border border-orange-100 group-hover:bg-orange-100"}`}>
-                <Icon className="text-orange-500" size={26} />
-              </div>
-              <h3 className="text-xl font-bold mb-3" style={{ color: "var(--text)" }}>{title}</h3>
-              <p className="text-sm leading-relaxed" style={{ color: "var(--text-muted)" }}>{desc}</p>
-              <div className="mt-5 flex items-center gap-1 text-orange-500 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                Learn more <ArrowRight size={12} />
-              </div>
-            </AnimatedCard>
-          ))}
+          {services.filter(s => s.status === "active").slice(0, 6).map(({ icon, title, description }, i) => {
+            const Icon = ICON_MAP[icon] || Wrench;
+            return (
+              <AnimatedCard key={i} delay={i * 0.08} hover3d className="p-8 group cursor-default">
+                <div className={`mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl transition-colors duration-300
+                  ${dark ? "bg-orange-500/10 border border-orange-500/20 group-hover:bg-orange-500/20"
+                         : "bg-orange-50 border border-orange-100 group-hover:bg-orange-100"}`}>
+                  <Icon className="text-orange-500" size={26} />
+                </div>
+                <h3 className="text-xl font-bold mb-3" style={{ color: "var(--text)" }}>{title}</h3>
+                <p className="text-sm leading-relaxed" style={{ color: "var(--text-muted)" }}>{description}</p>
+                <div className="mt-5 flex items-center gap-1 text-orange-500 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  Learn more <ArrowRight size={12} />
+                </div>
+              </AnimatedCard>
+            );
+          })}
         </div>
       </section>
 
