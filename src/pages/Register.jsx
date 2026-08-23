@@ -1,180 +1,125 @@
-import React, { useState } from 'react'
-import { User, Mail, Lock, UserPlus } from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { User, Mail, Lock, UserPlus, ArrowLeft } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+
+const inputClass = `
+  w-full bg-white/5 border border-white/10 rounded-xl
+  px-4 py-3.5 pl-11 text-white text-sm
+  placeholder:text-white/25 outline-none
+  focus:border-orange-500/50 transition-colors duration-200
+`;
 
 const Register = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const navigate = useNavigate()
+  const handleChange = (e) => setFormData(p => ({ ...p, [e.target.name]: e.target.value }));
 
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: ''
-  })
-
-  // Handle input change
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
-
-  // Handle register
   const handleSubmit = async (e) => {
-    e.preventDefault()
-
+    e.preventDefault();
+    setLoading(true); setError("");
     try {
-
-      const response = await fetch('http://localhost:3000/api/users/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        alert(data.error)
-        return
-      }
-
-      alert('Registration successful')
-
-      navigate('/login')
-
-    } catch (err) {
-      console.error('Register error:', err)
+      const res = await fetch("http://localhost:3000/api/users/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error || "Registration failed"); return; }
+      navigate("/login");
+    } catch {
+      setError("Connection error. Please try again.");
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-6">
+    <div className="force-dark min-h-screen flex items-center justify-center px-6 relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-96 h-96 bg-orange-500/8 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-orange-600/6 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2" />
+      <div className="pointer-events-none fixed inset-0 bg-grid opacity-30" />
 
-      <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-3xl shadow-2xl p-8">
+      <motion.div
+        initial={{ opacity: 0, y: 30, rotateX: 8 }}
+        animate={{ opacity: 1, y: 0, rotateX: 0 }}
+        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-10 w-full max-w-md"
+        style={{ transformStyle: "preserve-3d" }}
+      >
+        <Link to="/" className="mb-6 inline-flex items-center gap-2 text-white/40 text-sm hover:text-white transition">
+          <ArrowLeft size={15} /> Back to Home
+        </Link>
 
-        {/* Header */}
-        <div className="text-center mb-8">
+        <div className="rounded-3xl p-9 relative overflow-hidden"
+          style={{ background: "rgba(15,23,42,0.95)", border: "1px solid rgba(255,255,255,0.08)" }}>
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-px bg-gradient-to-r from-transparent via-orange-500 to-transparent" />
 
-          <h1 className="text-4xl font-bold text-white">
-            Create Account
-          </h1>
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-black text-white mb-2">Create Account</h1>
+            <p className="text-white/40 text-sm">Join the Tech24 platform</p>
+          </div>
 
-          <p className="text-gray-400 mt-3">
-            Join and start sharing your blogs
+          {error && (
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+              className="mb-5 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+              {error}
+            </motion.div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block mb-2 text-xs font-medium text-white/50 uppercase tracking-wider">Full Name</label>
+              <div className="relative">
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30" size={16} />
+                <input type="text" name="name" value={formData.name} onChange={handleChange}
+                  placeholder="Enter your full name" className={inputClass} required />
+              </div>
+            </div>
+
+            <div>
+              <label className="block mb-2 text-xs font-medium text-white/50 uppercase tracking-wider">Email</label>
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30" size={16} />
+                <input type="email" name="email" value={formData.email} onChange={handleChange}
+                  placeholder="Enter your email" className={inputClass} required />
+              </div>
+            </div>
+
+            <div>
+              <label className="block mb-2 text-xs font-medium text-white/50 uppercase tracking-wider">Password</label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30" size={16} />
+                <input type="password" name="password" value={formData.password} onChange={handleChange}
+                  placeholder="Create a password" className={inputClass} required />
+              </div>
+            </div>
+
+            <motion.button
+              type="submit" disabled={loading}
+              whileHover={{ scale: 1.02, boxShadow: "0 0 25px rgba(249,115,22,0.4)" }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 py-3.5 text-sm font-semibold text-white disabled:opacity-50"
+            >
+              {loading ? (
+                <span className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+              ) : (
+                <><UserPlus size={16} /> Create Account</>
+              )}
+            </motion.button>
+          </form>
+
+          <p className="mt-7 text-center text-white/30 text-xs">
+            Already have an account?{" "}
+            <Link to="/login" className="text-orange-400 hover:text-orange-300 font-medium transition">Sign In</Link>
           </p>
-
         </div>
-
-        {/* Form */}
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-5"
-        >
-
-          {/* Name */}
-          <div>
-
-            <label className="text-gray-300 text-sm mb-2 block">
-              Full Name
-            </label>
-
-            <div className="flex items-center bg-gray-800 border border-gray-700 rounded-xl px-4">
-
-              <User className="text-gray-400 w-5 h-5" />
-
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Enter your name"
-                className="w-full bg-transparent outline-none px-3 py-4 text-white"
-              />
-
-            </div>
-
-          </div>
-
-          {/* Email */}
-          <div>
-
-            <label className="text-gray-300 text-sm mb-2 block">
-              Email
-            </label>
-
-            <div className="flex items-center bg-gray-800 border border-gray-700 rounded-xl px-4">
-
-              <Mail className="text-gray-400 w-5 h-5" />
-
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Enter your email"
-                className="w-full bg-transparent outline-none px-3 py-4 text-white"
-              />
-
-            </div>
-
-          </div>
-
-          {/* Password */}
-          <div>
-
-            <label className="text-gray-300 text-sm mb-2 block">
-              Password
-            </label>
-
-            <div className="flex items-center bg-gray-800 border border-gray-700 rounded-xl px-4">
-
-              <Lock className="text-gray-400 w-5 h-5" />
-
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Create password"
-                className="w-full bg-transparent outline-none px-3 py-4 text-white"
-              />
-
-            </div>
-
-          </div>
-
-          {/* Button */}
-          <button
-            type="submit"
-            className="w-full bg-white text-gray-900 font-semibold py-4 rounded-xl hover:bg-gray-200 transition duration-300 flex items-center justify-center gap-2"
-          >
-            <UserPlus className="w-5 h-5" />
-            Register
-          </button>
-
-        </form>
-
-        {/* Footer */}
-        <p className="text-center text-gray-400 text-sm mt-8">
-
-          Already have an account?
-
-          <Link
-            to="/login"
-            className="text-white hover:text-gray-300 ml-2"
-          >
-            Login
-          </Link>
-
-        </p>
-
-      </div>
-
+      </motion.div>
     </div>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;

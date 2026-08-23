@@ -1,37 +1,59 @@
-import React from "react";
-import Navbar from "./components/Navbar";
-import Home from "./components/Home";
-import Footer from "./components/Footer";
-import { Route, Routes } from "react-router-dom";
-import Services from "./components/Services";
-import About from "./components/About";
-import Banks from "./components/Banks";
-import Contact from "./components/Contact";
-import Careers from "./components/Carrers";
-import ScrollToTop from "./components/ScrollToTop";
-const App = () => {
-  return (
-    <div className="relative min-h-screen">
-      {/* Background */}
-     <div class="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[14px_24px]"></div>
+import { Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "./context/ThemeContext";
 
-      {/* Content */}
-      <Navbar />
-       <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<Home/>}/>
-        <Route path="/services" element={<Services/>}/>
-        <Route/>
-        <Route path="/about" element={<About/>}/>
-        <Route path="/banks" element={<Banks/>}/>
-        <Route path="/contact" element={<Contact/>}/>
-        <Route path="/careers" element={<Careers/>}/>
-      </Routes>
-      
-      
-      <Footer/>
-    </div>
-  );
-};
+import Navbar        from "./components/layout/Navbar";
+import Footer        from "./components/layout/Footer";
+import ScrollToTop   from "./components/layout/ScrollToTop";
+
+import Home          from "./components/sections/Home";
+import About         from "./components/sections/About";
+import Services      from "./components/sections/Services";
+import Banks         from "./components/sections/Banks";
+import Contact       from "./components/sections/Contact";
+import Careers       from "./components/sections/Careers";
+
+import Login         from "./pages/Login";
+import Register      from "./pages/Register";
+import Dashboard     from "./pages/Dashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+const PUBLIC_ROUTES = [
+  { path: "/",         element: <Home /> },
+  { path: "/about",    element: <About /> },
+  { path: "/services", element: <Services /> },
+  { path: "/banks",    element: <Banks /> },
+  { path: "/contact",  element: <Contact /> },
+  { path: "/careers",  element: <Careers /> },
+];
+
+const AppShell = () => (
+  <div className="relative min-h-screen" style={{ background: "var(--bg)" }}>
+    {/* grid bg */}
+    <div className="pointer-events-none fixed inset-0 bg-grid opacity-60 z-0" />
+
+    <Routes>
+      <Route path="/login"      element={<Login />} />
+      <Route path="/register"   element={<Register />} />
+      <Route path="/dashboard"  element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+
+      {PUBLIC_ROUTES.map(({ path, element }) => (
+        <Route key={path} path={path} element={
+          <div className="relative z-10">
+            <ScrollToTop />
+            <Navbar />
+            <main>{element}</main>
+            <Footer />
+          </div>
+        } />
+      ))}
+    </Routes>
+  </div>
+);
+
+const App = () => (
+  <ThemeProvider>
+    <AppShell />
+  </ThemeProvider>
+);
 
 export default App;

@@ -1,1 +1,173 @@
 @import "tailwindcss";
+
+/* ─── CSS variables — dark (default) ───────────────────── */
+:root {
+  --bg:           #020617;
+  --bg-card:      rgba(255,255,255,0.04);
+  --bg-card-hover:rgba(255,255,255,0.07);
+  --border:       rgba(255,255,255,0.08);
+  --border-hover: rgba(249,115,22,0.35);
+  --text:         #f8fafc;
+  --text-muted:   rgba(248,250,252,0.45);
+  --scrollbar-bg: #020617;
+  --grid-line:    rgba(249,115,22,0.045);
+  --glow-card:    rgba(249,115,22,0.10);
+}
+
+/* ─── CSS variables — light ─────────────────────────────── */
+:root.light {
+  --bg:           #f8fafc;
+  --bg-card:      rgba(255,255,255,0.75);
+  --bg-card-hover:rgba(255,255,255,0.95);
+  --border:       rgba(0,0,0,0.08);
+  --border-hover: rgba(249,115,22,0.4);
+  --text:         #0f172a;
+  --text-muted:   rgba(15,23,42,0.50);
+  --scrollbar-bg: #f8fafc;
+  --grid-line:    rgba(0,0,0,0.05);
+  --glow-card:    rgba(249,115,22,0.07);
+}
+
+/* ─── Base ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--scrollbar-bg); }
+::-webkit-scrollbar-thumb { background: #f97316; border-radius: 3px; }
+
+/* ─── Glass card ────────────────────────────────────────── */
+.glass-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: background 0.4s ease, border 0.4s ease;
+}
+.glass-card:hover {
+  background: var(--bg-card-hover);
+}
+
+/* ─── Background grid ───────────────────────────────────── */
+.bg-grid {
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ─── Gradient text ─────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--text) 0%, #f97316 55%, #ea580c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* light mode: start from dark slate instead of white */
+:root.light .gradient-text {
+  background: linear-gradient(135deg, #374151 0%, #f97316 55%, #ea580c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Force-dark wrapper (Dashboard + Login stay dark always) ── */
+.force-dark {
+  --bg:           #020617;
+  --bg-card:      rgba(255,255,255,0.05);
+  --bg-card-hover:rgba(255,255,255,0.08);
+  --border:       rgba(255,255,255,0.08);
+  --border-hover: rgba(249,115,22,0.35);
+  --text:         #f8fafc;
+  --text-muted:   rgba(248,250,252,0.45);
+  --scrollbar-bg: #020617;
+  --grid-line:    rgba(249,115,22,0.045);
+  background-color: #020617;
+  color: #f8fafc;
+}
+
+/* override glass-card inside force-dark so it never turns white */
+.force-dark .glass-card,
+.force-dark .glass-card:hover {
+  background: rgba(255,255,255,0.05) !important;
+  border-color: rgba(255,255,255,0.08) !important;
+}
+.force-dark .glass-card:hover {
+  background: rgba(255,255,255,0.08) !important;
+}
+
+/* inputs inside force-dark stay dark */
+.force-dark input,
+.force-dark textarea,
+.force-dark select {
+  color-scheme: dark;
+  background-color: rgba(255,255,255,0.05);
+  color: #f8fafc;
+}
+
+/* table rows */
+.force-dark tr:hover {
+  background-color: rgba(255,255,255,0.03) !important;
+}
+
+/* ─── Always-dark card — for modals that render outside force-dark ── */
+.dark-card {
+  background: #0f172a !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  color: #f8fafc !important;
+}
+.dark-card input,
+.dark-card textarea,
+.dark-card select {
+  background: rgba(255,255,255,0.05) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+  color: #f8fafc !important;
+  color-scheme: dark;
+}
+
+/* ─── Orange glow ───────────────────────────────────────── */
+.glow-orange { box-shadow: 0 0 40px rgba(249,115,22,0.25); }
+
+/* ─── Animations ────────────────────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-14px); }
+}
+.animate-float { animation: float 5s ease-in-out infinite; }
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(249,115,22,0.3); }
+  50%       { box-shadow: 0 0 50px rgba(249,115,22,0.6); }
+}
+.animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+
+/* ─── Select option dropdowns — always dark in admin ──────── */
+.force-dark select option,
+.dark-card select option {
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+/* ─── Smooth theme transition ─────────────────────────────── */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}
+/* Don't let the broad transition interfere with Framer Motion transforms */
+.motion-safe\:transition-none,
+[data-framer-component-type] {
+  transition: none !important;
+}
