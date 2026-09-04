@@ -3,30 +3,25 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../../assets/logo.png";
-import GetQuoteModal from "../sections/GetQuoteModal";
+import ContactModal from "../sections/ContactModal";
 import { NAV_LINKS } from "../../constants";
 import { useTheme } from "../../context/ThemeContext";
 
 const Navbar = () => {
-  const [open, setOpen]           = useState(false);
-  const [scrolled, setScrolled]   = useState(false);
-  const [openQuote, setOpenQuote] = useState(false);
-  const location                  = useLocation();
-  const { dark, toggle }          = useTheme();
+  const [open, setOpen]             = useState(false);
+  const [scrolled, setScrolled]     = useState(false);
+  const [openContact, setOpenContact] = useState(false);
+  const location                    = useLocation();
+  const { dark, toggle }            = useTheme();
 
-  // Track scroll for nav bg change
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", fn, { passive: true });
     return () => window.removeEventListener("scroll", fn);
   }, []);
 
-  // Close mobile menu on route change
-  useEffect(() => {
-    setOpen(false);
-  }, [location.pathname]);
+  useEffect(() => { setOpen(false); }, [location.pathname]);
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
@@ -42,12 +37,10 @@ const Navbar = () => {
 
   const linkIdle   = dark ? "text-white/60 hover:text-white"  : "text-black/60 hover:text-black";
   const linkActive = dark ? "text-orange-400"                  : "text-orange-500";
-
-  const closeMenu = () => setOpen(false);
+  const closeMenu  = () => setOpen(false);
 
   return (
     <>
-      {/* ── Fixed nav bar ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 px-4 pt-4">
         <motion.div
           initial={{ y: -80, opacity: 0 }}
@@ -65,9 +58,7 @@ const Navbar = () => {
             {NAV_LINKS.map((link) => {
               const active = location.pathname === link.path;
               return (
-                <Link
-                  key={link.path}
-                  to={link.path}
+                <Link key={link.path} to={link.path}
                   className={`relative px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${active ? linkActive : linkIdle}`}
                 >
                   {active && (
@@ -83,7 +74,7 @@ const Navbar = () => {
             })}
           </div>
 
-          {/* Desktop right actions */}
+          {/* Desktop right */}
           <div className="hidden md:flex items-center gap-3">
             {/* Theme toggle */}
             <motion.button
@@ -110,24 +101,21 @@ const Navbar = () => {
               </AnimatePresence>
             </motion.button>
 
-            {/* Get Quote */}
+            {/* Contact Us button → opens popup */}
             <motion.button
+              onClick={() => setOpenContact(true)}
               whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(249,115,22,0.45)" }}
               whileTap={{ scale: 0.97 }}
-              onClick={() => setOpenQuote(true)}
               className="rounded-full bg-gradient-to-r from-orange-500 to-orange-600 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_0_15px_rgba(249,115,22,0.3)]"
             >
-              Get Quote
+              Contact Us
             </motion.button>
           </div>
 
           {/* Mobile right: theme + hamburger */}
           <div className="flex md:hidden items-center gap-2">
-            <button
-              onClick={toggle}
-              aria-label="Toggle theme"
-              className={`h-8 w-8 rounded-lg flex items-center justify-center ${dark ? "text-white/50" : "text-black/50"}`}
-            >
+            <button onClick={toggle} aria-label="Toggle theme"
+              className={`h-8 w-8 rounded-lg flex items-center justify-center ${dark ? "text-white/50" : "text-black/50"}`}>
               {dark ? <Sun size={16} /> : <Moon size={16} />}
             </button>
             <motion.button
@@ -152,45 +140,37 @@ const Navbar = () => {
         </motion.div>
       </nav>
 
-      {/* ── Mobile menu — full-screen overlay, fixed so it never scrolls ── */}
+      {/* Mobile full-screen overlay */}
       <AnimatePresence>
         {open && (
           <>
-            {/* Backdrop */}
             <motion.div
               key="backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{   opacity: 0 }}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={closeMenu}
               className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden"
             />
-
-            {/* Slide-down panel */}
             <motion.div
               key="panel"
               initial={{ opacity: 0, y: -16 }}
-              animate={{ opacity: 1, y: 0  }}
-              exit={{   opacity: 0, y: -16 }}
+              animate={{ opacity: 1, y: 0   }}
+              exit={{   opacity: 0, y: -16  }}
               transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-              className={`fixed top-0 left-0 right-0 z-50 pt-24 pb-6 px-4 md:hidden
-                ${dark ? "bg-slate-950/98" : "bg-white/98"} backdrop-blur-2xl`}
+              className={`fixed top-0 left-0 right-0 z-50 pt-24 pb-6 px-4 md:hidden backdrop-blur-2xl
+                ${dark ? "bg-slate-950/98" : "bg-white/98"}`}
               style={{ borderBottom: `1px solid ${dark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.07)"}` }}
             >
               <div className="max-w-7xl mx-auto flex flex-col gap-1">
                 {NAV_LINKS.map((link, i) => {
                   const active = location.pathname === link.path;
                   return (
-                    <motion.div
-                      key={link.path}
+                    <motion.div key={link.path}
                       initial={{ opacity: 0, x: -14 }}
-                      animate={{ opacity: 1, x: 0 }}
+                      animate={{ opacity: 1, x: 0   }}
                       transition={{ delay: i * 0.04, duration: 0.25 }}
                     >
-                      <Link
-                        to={link.path}
-                        onClick={closeMenu}
+                      <Link to={link.path} onClick={closeMenu}
                         className={`flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-all duration-200
                           ${active
                             ? dark
@@ -201,24 +181,23 @@ const Navbar = () => {
                               : "text-black/60 hover:bg-black/5 hover:text-black"
                           }`}
                       >
-                        {active && (
-                          <span className="h-1.5 w-1.5 rounded-full bg-orange-500 shrink-0" />
-                        )}
+                        {active && <span className="h-1.5 w-1.5 rounded-full bg-orange-500 shrink-0" />}
                         {link.name}
                       </Link>
                     </motion.div>
                   );
                 })}
 
+                {/* Mobile Contact Us button */}
                 <motion.button
                   initial={{ opacity: 0, x: -14 }}
-                  animate={{ opacity: 1, x: 0 }}
+                  animate={{ opacity: 1, x: 0   }}
                   transition={{ delay: NAV_LINKS.length * 0.04, duration: 0.25 }}
                   whileTap={{ scale: 0.97 }}
-                  onClick={() => { closeMenu(); setOpenQuote(true); }}
+                  onClick={() => { closeMenu(); setOpenContact(true); }}
                   className="mt-3 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 py-3.5 text-sm font-semibold text-white"
                 >
-                  Get Quote
+                  Contact Us
                 </motion.button>
               </div>
             </motion.div>
@@ -226,7 +205,7 @@ const Navbar = () => {
         )}
       </AnimatePresence>
 
-      <GetQuoteModal open={openQuote} setOpen={setOpenQuote} />
+      <ContactModal open={openContact} setOpen={setOpenContact} />
     </>
   );
 };

@@ -34,7 +34,7 @@ const QuoteRequests = () => {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-2xl font-black text-white mb-1">Quote Requests</h2>
+          <h2 className="text-2xl font-black text-white mb-1">Contact Inquiries</h2>
           <p className="text-white/40 text-sm">{items.filter(q => q.status === "pending").length} pending review</p>
         </div>
         <div className="flex gap-2">

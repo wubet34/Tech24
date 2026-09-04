@@ -53,7 +53,7 @@ const ManageBanks = () => {
         </div>
         <motion.button onClick={openAdd}
           whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-          className="flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 px-5 py-2.5 text-sm font-semibold text-white"
+          className="flex items-center gap-2 rounded-full bg-linear-to-r from-orange-500 to-orange-600 px-5 py-2.5 text-sm font-semibold text-white"
         >
           <Plus size={16} /> Add Bank
         </motion.button>

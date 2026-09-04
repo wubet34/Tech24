@@ -1,33 +1,29 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  LayoutDashboard, Wrench, Building2, Users,
+  LayoutDashboard, Wrench, Cpu, Users,
   Package, FileText, Mail, Settings,
-  LogOut, Menu, X, BarChart2, User, Calendar,
+  LogOut, Menu, BarChart2,
 } from "lucide-react";
 
-import Overview        from "./admin/Overview";
-import ManageServices  from "./admin/ManageServices";
-import ManageBanks     from "./admin/ManageBanks";
-import ManageTeam      from "./admin/ManageTeam";
-import Inventory       from "./admin/Inventory";
-import QuoteRequests   from "./admin/QuoteRequests";
-import Messages        from "./admin/Messages";
-import SiteSettings    from "./admin/SiteSettings";
-
-// When backend is ready swap this:
-//   const profile = await authAPI.profile();
-// For now it hits your existing endpoint
+import Overview       from "./admin/Overview";
+import ManageServices from "./admin/ManageServices";
+import ManageProducts from "./admin/ManageProducts";
+import ManageTeam     from "./admin/ManageTeam";
+import Inventory      from "./admin/Inventory";
+import QuoteRequests  from "./admin/QuoteRequests";
+import Messages       from "./admin/Messages";
+import SiteSettings   from "./admin/SiteSettings";
 
 const TABS = [
-  { id: "overview",  label: "Overview",       icon: LayoutDashboard },
-  { id: "services",  label: "Services",       icon: Wrench          },
-  { id: "banks",     label: "Banks",          icon: Building2       },
-  { id: "team",      label: "Team",           icon: Users           },
-  { id: "inventory", label: "Inventory",      icon: Package         },
-  { id: "quotes",    label: "Quote Requests", icon: FileText        },
-  { id: "messages",  label: "Messages",       icon: Mail            },
-  { id: "settings",  label: "Site Settings",  icon: Settings        },
+  { id: "overview",  label: "Overview",    icon: LayoutDashboard },
+  { id: "services",  label: "Services",    icon: Wrench          },
+  { id: "products",  label: "Products",    icon: Cpu             },
+  { id: "team",      label: "Team",        icon: Users           },
+  { id: "inventory", label: "Inventory",   icon: Package         },
+  { id: "quotes",    label: "Inquiries",   icon: FileText        },
+  { id: "messages",  label: "Messages",    icon: Mail            },
+  { id: "settings",  label: "Site Settings", icon: Settings      },
 ];
 
 const Dashboard = () => {
@@ -74,7 +70,7 @@ const Dashboard = () => {
     switch (activeTab) {
       case "overview":  return <Overview user={user} />;
       case "services":  return <ManageServices />;
-      case "banks":     return <ManageBanks />;
+      case "products":  return <ManageProducts />;
       case "team":      return <ManageTeam />;
       case "inventory": return <Inventory />;
       case "quotes":    return <QuoteRequests />;

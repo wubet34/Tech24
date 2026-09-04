@@ -25,7 +25,7 @@ export const demoBanks = [
   { id: 3, name: "Ahadu Bank",   years: "1+ years", atms: 14, status: "active",   contact: "ahadu@bank.et" },
   { id: 4, name: "Amhara Bank",  years: "2+ years", atms: 22, status: "active",   contact: "amhara@bank.et" },
   { id: 5, name: "Zemen Bank",   years: "1+ years", atms: 11, status: "inactive", contact: "zemen@bank.et" },
-  { id: 6, name: "Oromia Bank",  years: "2+ years", atms: 18, status: "active",   contact: "oromia@bank.et" },
+  
 ];
 
 export const demoTeam = [

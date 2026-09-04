@@ -1,23 +1,15 @@
 import { useState, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Wrench, Clock, ShieldCheck, Users, Globe, Cpu, ArrowRight, ChevronDown } from "lucide-react";
+import { Link } from "react-router-dom";
 import AnimatedCard from "../ui/AnimatedCard";
 import SectionHeading from "../ui/SectionHeading";
 import GlowButton from "../ui/GlowButton";
-import GetQuoteModal from "./GetQuoteModal";
+import ContactModal from "./ContactModal";
 import { useTheme } from "../../context/ThemeContext";
 import { useSiteData } from "../../context/SiteDataContext";
 
 const ICON_MAP = { Wrench, Clock, ShieldCheck, Users, Globe, Cpu };
-
-const SERVICES_PREVIEW = [
-  { icon: "Wrench",      title: "ATM Installation",    desc: "Professional installation of new ATMs with GRG Banking Systems." },
-  { icon: "Clock",       title: "24/7 Emergency",      desc: "Round-the-clock emergency repair and maintenance services." },
-  { icon: "ShieldCheck", title: "Genuine Parts",       desc: "Original spare parts and components for all ATM models." },
-  { icon: "Users",       title: "Expert Team",         desc: "Certified and experienced GRG system technicians." },
-  { icon: "Globe",       title: "Nationwide",          desc: "Services available across all regions of Ethiopia." },
-  { icon: "Cpu",         title: "GRG Banking Support", desc: "Expert support including software updates and troubleshooting." },
-];
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 35 },
@@ -26,9 +18,10 @@ const fadeUp = (delay = 0) => ({
 });
 
 const Home = () => {
-  const [openQuote, setOpenQuote] = useState(false);
-  const { dark } = useTheme();
-  const { hero, stats, services } = useSiteData();
+  const [openContact, setOpenContact] = useState(false);
+  const { dark }                      = useTheme();
+  const { hero, stats, services }     = useSiteData();
+
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const heroY  = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
@@ -40,26 +33,27 @@ const Home = () => {
       {/* ══ HERO ══════════════════════════════════════════════ */}
       <section ref={heroRef} className="relative min-h-[calc(100vh-5rem)] flex items-center justify-center overflow-hidden">
 
-        {/* Animated CSS blobs — no Three.js */}
+        {/* Animated blobs */}
         <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden">
           <motion.div
             animate={{ scale: [1, 1.15, 1], x: [0, 30, 0], y: [0, -20, 0] }}
             transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-            className={`absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full blur-[120px] ${dark ? "bg-orange-500/10" : "bg-orange-200/60"}`}
+            className={`absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full blur-[120px]
+              ${dark ? "bg-orange-500/10" : "bg-orange-200/60"}`}
           />
           <motion.div
             animate={{ scale: [1, 1.2, 1], x: [0, -25, 0], y: [0, 25, 0] }}
             transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 3 }}
-            className={`absolute -bottom-40 -left-40 w-[600px] h-[600px] rounded-full blur-[120px] ${dark ? "bg-slate-700/30" : "bg-orange-100/80"}`}
+            className={`absolute -bottom-40 -left-40 w-[600px] h-[600px] rounded-full blur-[120px]
+              ${dark ? "bg-slate-700/30" : "bg-orange-100/80"}`}
           />
           <motion.div
             animate={{ scale: [1, 1.1, 1], x: [0, 15, 0] }}
             transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full blur-[100px] ${dark ? "bg-orange-600/6" : "bg-orange-100/50"}`}
+            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full blur-[100px]
+              ${dark ? "bg-orange-600/6" : "bg-orange-100/50"}`}
           />
         </div>
-
-        {/* Grid overlay */}
         <div className="absolute inset-0 -z-10 bg-grid opacity-60" />
 
         <motion.div style={{ y: heroY, opacity: heroOp }}
@@ -68,8 +62,9 @@ const Home = () => {
           {/* Live badge */}
           <motion.div {...fadeUp(0.1)}>
             <span className={`inline-flex items-center gap-2.5 rounded-full px-5 py-2 mb-8 text-xs font-semibold uppercase tracking-[0.2em]
-              ${dark ? "border border-orange-500/30 bg-orange-500/10 text-orange-400"
-                     : "border border-orange-200   bg-orange-50        text-orange-600"}`}>
+              ${dark
+                ? "border border-orange-500/30 bg-orange-500/10 text-orange-400"
+                : "border border-orange-200 bg-orange-50 text-orange-600"}`}>
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75 animate-ping" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-orange-500" />
@@ -78,7 +73,7 @@ const Home = () => {
             </span>
           </motion.div>
 
-          {/* Headline */}
+          {/* Headline — from SiteSettings */}
           <motion.h1 {...fadeUp(0.2)}
             className="max-w-5xl mx-auto text-5xl md:text-7xl font-bold leading-tight gradient-text"
           >
@@ -94,15 +89,17 @@ const Home = () => {
 
           {/* CTAs */}
           <motion.div {...fadeUp(0.45)} className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <GlowButton onClick={() => setOpenQuote(true)} variant="primary" className="text-base px-9 py-4">
-              Request Services <ArrowRight size={16} />
+            <GlowButton onClick={() => setOpenContact(true)} variant="primary" className="text-base px-9 py-4">
+              Contact Us <ArrowRight size={16} />
             </GlowButton>
-            <GlowButton variant="outline" className="text-base px-9 py-4">
-              Join Our Team
-            </GlowButton>
+            <Link to="/products">
+              <GlowButton variant="outline" className="text-base px-9 py-4">
+                View ATM Products
+              </GlowButton>
+            </Link>
           </motion.div>
 
-          {/* Stats */}
+          {/* Stats — from SiteSettings */}
           <motion.div
             initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
@@ -131,26 +128,28 @@ const Home = () => {
         </motion.div>
       </section>
 
-      {/* ══ SERVICES ══════════════════════════════════════════ */}
+      {/* ══ SERVICES PREVIEW ══════════════════════════════════ */}
       <section className="max-w-7xl mx-auto px-6 py-28">
-        {/* Divider glow */}
-        <div className={`w-full h-px mb-20 ${dark ? "bg-gradient-to-r from-transparent via-orange-500/30 to-transparent" : "bg-gradient-to-r from-transparent via-orange-300/50 to-transparent"}`} />
-
+        <div className={`w-full h-px mb-20
+          ${dark
+            ? "bg-gradient-to-r from-transparent via-orange-500/30 to-transparent"
+            : "bg-gradient-to-r from-transparent via-orange-300/50 to-transparent"}`}
+        />
         <SectionHeading
           eyebrow="What We Do"
           title="Our Services"
           subtitle="Comprehensive ATM solutions tailored to your bank's needs."
           className="mb-14"
         />
-
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {services.filter(s => s.status === "active").slice(0, 6).map(({ icon, title, description }, i) => {
             const Icon = ICON_MAP[icon] || Wrench;
             return (
               <AnimatedCard key={i} delay={i * 0.08} hover3d className="p-8 group cursor-default">
                 <div className={`mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl transition-colors duration-300
-                  ${dark ? "bg-orange-500/10 border border-orange-500/20 group-hover:bg-orange-500/20"
-                         : "bg-orange-50 border border-orange-100 group-hover:bg-orange-100"}`}>
+                  ${dark
+                    ? "bg-orange-500/10 border border-orange-500/20 group-hover:bg-orange-500/20"
+                    : "bg-orange-50 border border-orange-100 group-hover:bg-orange-100"}`}>
                   <Icon className="text-orange-500" size={26} />
                 </div>
                 <h3 className="text-xl font-bold mb-3" style={{ color: "var(--text)" }}>{title}</h3>
@@ -192,14 +191,14 @@ const Home = () => {
             <p className="max-w-2xl mx-auto text-lg mb-8" style={{ color: "var(--text-muted)" }}>
               Join the leading banks in Ethiopia that trust Tech24 for ATM installation and maintenance services.
             </p>
-            <GlowButton onClick={() => setOpenQuote(true)} variant="primary" className="text-base px-10 py-4 animate-pulse-glow">
-              Get Quote <ArrowRight size={16} />
+            <GlowButton onClick={() => setOpenContact(true)} variant="primary" className="text-base px-10 py-4 animate-pulse-glow">
+              Contact Us <ArrowRight size={16} />
             </GlowButton>
           </div>
         </motion.div>
       </section>
 
-      <GetQuoteModal open={openQuote} setOpen={setOpenQuote} />
+      <ContactModal open={openContact} setOpen={setOpenContact} />
     </div>
   );
 };

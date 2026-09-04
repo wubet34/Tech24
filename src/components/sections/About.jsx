@@ -97,7 +97,7 @@ const About = () => {
             const Icon = TEAM_ICONS[icon] || UserCircle2;
             return (
               <AnimatedCard key={id ?? i} delay={i * 0.1} hover3d className="p-8 text-center group">
-                <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-orange-500/20 to-orange-600/10 border border-orange-500/20 mb-5 group-hover:scale-110 transition-transform duration-300">
+                <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-linear-to-br from-orange-500/20 to-orange-600/10 border border-orange-500/20 mb-5 group-hover:scale-110 transition-transform duration-300">
                   <Icon className="text-orange-500" size={36} />
                 </div>
                 <h3 className="text-lg font-bold mb-1" style={{ color: "var(--text)" }}>{name}</h3>
