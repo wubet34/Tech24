@@ -76,12 +76,7 @@ export const SERVICES = [
   },
 ];
 
-export const TEAM = [
-  { name: "Wubet Alebachew",   role: "Founder & CEO",     bio: "Expert in GRG Banking Systems with 10+ years in the fintech sector.", icon: "UserCircle2" },
-  { name: "Technical Director", role: "Head of Engineering",bio: "Leading our technical operations and engineering excellence.",         icon: "Cpu"         },
-  { name: "Operations Manager", role: "Field Operations",   bio: "Overseeing nationwide ATM field operations and logistics.",            icon: "Wrench"      },
-  { name: "Support Lead",       role: "Customer Support",   bio: "Ensuring 24/7 customer satisfaction and rapid response.",             icon: "Headphones"  },
-];
+// Team section removed
 
 // ── GRG ATM Products ──────────────────────────────────────────────────
 export const GRG_PRODUCTS = [

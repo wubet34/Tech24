@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  LayoutDashboard, Wrench, Cpu, Users,
+  LayoutDashboard, Wrench, Cpu,
   Package, FileText, Mail, Settings,
   LogOut, Menu, BarChart2,
 } from "lucide-react";
@@ -9,21 +9,19 @@ import {
 import Overview       from "./admin/Overview";
 import ManageServices from "./admin/ManageServices";
 import ManageProducts from "./admin/ManageProducts";
-import ManageTeam     from "./admin/ManageTeam";
 import Inventory      from "./admin/Inventory";
 import QuoteRequests  from "./admin/QuoteRequests";
 import Messages       from "./admin/Messages";
 import SiteSettings   from "./admin/SiteSettings";
 
 const TABS = [
-  { id: "overview",  label: "Overview",    icon: LayoutDashboard },
-  { id: "services",  label: "Services",    icon: Wrench          },
-  { id: "products",  label: "Products",    icon: Cpu             },
-  { id: "team",      label: "Team",        icon: Users           },
-  { id: "inventory", label: "Inventory",   icon: Package         },
-  { id: "quotes",    label: "Inquiries",   icon: FileText        },
-  { id: "messages",  label: "Messages",    icon: Mail            },
-  { id: "settings",  label: "Site Settings", icon: Settings      },
+  { id: "overview",  label: "Overview",     icon: LayoutDashboard },
+  { id: "services",  label: "Services",     icon: Wrench          },
+  { id: "products",  label: "Products",     icon: Cpu             },
+  { id: "inventory", label: "Inventory",    icon: Package         },
+  { id: "quotes",    label: "Inquiries",    icon: FileText        },
+  { id: "messages",  label: "Messages",     icon: Mail            },
+  { id: "settings",  label: "Site Settings",icon: Settings        },
 ];
 
 const Dashboard = () => {
@@ -71,7 +69,6 @@ const Dashboard = () => {
       case "overview":  return <Overview user={user} />;
       case "services":  return <ManageServices />;
       case "products":  return <ManageProducts />;
-      case "team":      return <ManageTeam />;
       case "inventory": return <Inventory />;
       case "quotes":    return <QuoteRequests />;
       case "messages":  return <Messages />;

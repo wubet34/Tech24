@@ -28,12 +28,7 @@ export const demoBanks = [
   
 ];
 
-export const demoTeam = [
-  { id: 1, name: "Wubet Alebachew",   role: "Founder & CEO",      bio: "Expert in GRG Banking Systems with 10+ years in fintech.",         icon: "UserCircle2" },
-  { id: 2, name: "Abebe Girma",       role: "Technical Director",  bio: "Leading technical operations and engineering excellence.",          icon: "Cpu"         },
-  { id: 3, name: "Tigist Haile",      role: "Operations Manager",  bio: "Overseeing nationwide ATM field operations and logistics.",         icon: "Wrench"      },
-  { id: 4, name: "Dawit Tesfaye",     role: "Support Lead",        bio: "Ensuring 24/7 customer satisfaction and rapid response.",           icon: "Headphones"  },
-];
+export const demoTeam = [];
 
 export const demoQuotes = [
   { id: 1, bank: "Commercial Bank of Ethiopia", contact: "Yonas T.", email: "yonas@cbe.et", phone: "+251911111111", atms: "50 - 100", service: "ATM Installation",  status: "pending",   date: "2026-08-20" },

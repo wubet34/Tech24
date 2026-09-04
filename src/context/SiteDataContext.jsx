@@ -1,9 +1,8 @@
 import { createContext, useContext, useState, useCallback } from "react";
-import { demoServices, demoBanks, demoTeam } from "../services/demoData";
+import { demoServices, demoBanks } from "../services/demoData";
 
-// ── Bump this version whenever you change DEFAULTS ──────────────────────
-// Changing this clears any stale localStorage data on next page load.
-const DATA_VERSION = "v3";
+// Bump this version any time DEFAULTS change — clears stale localStorage.
+const DATA_VERSION = "v4";
 
 const DEFAULTS = {
   hero: {
@@ -26,19 +25,13 @@ const DEFAULTS = {
     hours:     "Mon – Fri: 8:00 – 18:00",
   },
   services: demoServices,
-  banks:    demoBanks,   // Oromia Bank is already removed from demoData.js
-  team:     demoTeam,
+  banks:    demoBanks,
 };
 
-// ── Storage helpers ──────────────────────────────────────────────────────
-
-// On first call, check the stored version. If it doesn't match DATA_VERSION,
-// wipe all site_* keys so stale data never bleeds through.
+// Clear stale cache whenever DATA_VERSION changes
 const initStorage = () => {
   try {
-    const stored = localStorage.getItem("site_data_version");
-    if (stored !== DATA_VERSION) {
-      // Clear every site_* key
+    if (localStorage.getItem("site_data_version") !== DATA_VERSION) {
       Object.keys(localStorage)
         .filter(k => k.startsWith("site_"))
         .forEach(k => localStorage.removeItem(k));
@@ -46,26 +39,19 @@ const initStorage = () => {
     }
   } catch {}
 };
-
-// Run once immediately when this module loads
 initStorage();
 
 const load = (key, fallback) => {
   try {
     const raw = localStorage.getItem(`site_${key}`);
     return raw ? JSON.parse(raw) : fallback;
-  } catch {
-    return fallback;
-  }
+  } catch { return fallback; }
 };
 
 const save = (key, value) => {
-  try {
-    localStorage.setItem(`site_${key}`, JSON.stringify(value));
-  } catch {}
+  try { localStorage.setItem(`site_${key}`, JSON.stringify(value)); } catch {}
 };
 
-// ── Context ──────────────────────────────────────────────────────────────
 const SiteDataContext = createContext(null);
 
 export const SiteDataProvider = ({ children }) => {
@@ -74,7 +60,6 @@ export const SiteDataProvider = ({ children }) => {
   const [contact,  setContactState]  = useState(() => load("contact",  DEFAULTS.contact));
   const [services, setServicesState] = useState(() => load("services", DEFAULTS.services));
   const [banks,    setBanksState]    = useState(() => load("banks",    DEFAULTS.banks));
-  const [team,     setTeamState]     = useState(() => load("team",     DEFAULTS.team));
 
   const update = useCallback((key, setter, value) => {
     setter(value);
@@ -86,7 +71,6 @@ export const SiteDataProvider = ({ children }) => {
   const setContact  = (v) => update("contact",  setContactState,  v);
   const setServices = (v) => update("services", setServicesState, v);
   const setBanks    = (v) => update("banks",    setBanksState,    v);
-  const setTeam     = (v) => update("team",     setTeamState,     v);
 
   return (
     <SiteDataContext.Provider value={{
@@ -95,7 +79,6 @@ export const SiteDataProvider = ({ children }) => {
       contact,  setContact,
       services, setServices,
       banks,    setBanks,
-      team,     setTeam,
     }}>
       {children}
     </SiteDataContext.Provider>
